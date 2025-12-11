@@ -8,11 +8,11 @@
 #define PAUSE_CMD "pause"
 #else
 #define CLEAR_CMD "clear"
-#define PAUSE_CMD "" /* we'll implement portable pause() */
+#define PAUSE_CMD "" 
 #endif
 
-#define ADMIN_PASSWORD "admin123"  // Simple password for admin panel
-#define RECEPTION_PASSWORD "reception123"  // Password for reception panel
+#define ADMIN_PASSWORD "admin123"  
+#define RECEPTION_PASSWORD "rece123"  
 
 struct Patient
 {
@@ -20,8 +20,8 @@ struct Patient
     char name[100];
     int age;
     char gender[20];
-    char blood_group[5];  // New field: blood group
-    char mobile[15];      // New field: mobile number
+    char blood_group[5];  
+    char mobile[15];      
 };
 
 struct Doctor
@@ -56,7 +56,7 @@ void viewPrescriptions();
 void doctorPortal();
 void labPortal();
 void adminPortal();
-void findDoctorPortal();  // New portal for finding doctors
+void findDoctorPortal();  
 void contributionPortal();
 void feedback();
 void bookAppointment();
@@ -92,7 +92,7 @@ int authenticateAdmin();
 int authenticateReception();
 void searchDoctorByName();
 void searchDoctorBySpecialization();
-char* getDoctorNameById(int id); // Helper function to get doctor name by ID
+char* getDoctorNameById(int id); 
 
 void clearScreen()
 {
@@ -301,7 +301,7 @@ void savePatient(struct Patient p)
     /* Check if ID already exists */
     if (isPatientIdExists(p.id))
     {
-        printf("\nError: Patient ID %d already exists!\n", p.id);
+        printf("\n\033[1;31mError: Patient ID %d already exists!\033[0m\n", p.id);
         pauseProg();
         return;
     }
@@ -501,7 +501,7 @@ void bookAppointment()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         pauseProg();
         return;
     }
@@ -522,7 +522,7 @@ void bookAppointment()
     /* Validate doctor ID */
     if (!isDoctorIdExists(did))
     {
-        printf("\nError: Doctor ID %d does not exist!\n", did);
+        printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", did);
         pauseProg();
         return;
     }
@@ -566,12 +566,12 @@ void receptionPortal()
     while (1)
     {
         clearScreen();
-        printf("\n========== RECEPTION PORTAL ==========\n");
+        printf("\n==========\033[1;32m\n RECEPTION PORTAL \033[0m==========\n\n");
         printf("1. Register New Patient\n");
         printf("2. Show All Registered Patients\n");
         printf("3. Search Patient by ID\n");
         printf("4. Book Appointment\n");
-        printf("5. Edit Patient Details\n");  // New option
+        printf("5. Edit Patient Details\n\n");  
         printf("6. Back to Main Menu\n");
         printf("\nEnter your choice: ");
         if (scanf("%d", &choice) != 1)
@@ -608,7 +608,7 @@ void receptionPortal()
             /* Check if ID already exists */
             if (isPatientIdExists(p.id))
             {
-                printf("\nError: Patient ID %d already exists!\n", p.id);
+                printf("\n\033[1;31mError: Patient ID %d already exists!\033[0m\n", p.id);
                 pauseProg();
                 break;
             }
@@ -702,7 +702,7 @@ void viewPatientDetails()
     /* Validate patient ID */
     if (!isPatientIdExists(id))
     {
-        printf("\nError: Patient ID %d does not exist!\n", id);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id);
         fclose(file);
         pauseProg();
         return;
@@ -754,7 +754,7 @@ void viewPatientDetails()
         trim(blood_group);
         trim(mobile);
 
-        printf("\n====== Your Details ======\n");
+        printf("\n====== Your Details ======\n\n");
         printf("ID        : %d\n", pid);
         printf("Name      : %s\n", name);
         printf("Age       : %d\n", age);
@@ -800,7 +800,7 @@ void viewAppointments()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -881,7 +881,7 @@ void viewLabReports()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -948,7 +948,7 @@ void viewPrescriptions()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -1001,11 +1001,11 @@ void patientPortal()
     while (1)
     {
         clearScreen();
-        printf("\n=============== PATIENT PORTAL ===============\n");
+        printf("\n===============\033[1;32m\n PATIENT PORTAL \033[0m===============\n\n");
         printf("1. View My Details\n");
         printf("2. View Appointments\n");
         printf("3. View Lab Reports\n");
-        printf("4. View Prescriptions\n");
+        printf("4. View Prescriptions\n\n");
         printf("5. Back to Main Menu\n");
 
         printf("\nEnter your choice: ");
@@ -1036,7 +1036,7 @@ void patientPortal()
         case 5:
             return;
         default:
-            printf("\nInvalid Input!\n");
+            printf("\nInvalid Input!\033[0m\n");
             pauseProg();
         }
     }
@@ -1063,7 +1063,7 @@ void writePrescription()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         pauseProg();
         return;
     }
@@ -1084,7 +1084,7 @@ void writePrescription()
     /* Validate doctor ID */
     if (!isDoctorIdExists(did))
     {
-        printf("\nError: Doctor ID %d does not exist!\n", did);
+        printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", did);
         pauseProg();
         return;
     }
@@ -1134,7 +1134,7 @@ void updateMedicalRecord()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         pauseProg();
         return;
     }
@@ -1155,7 +1155,7 @@ void updateMedicalRecord()
     /* Validate doctor ID */
     if (!isDoctorIdExists(did))
     {
-        printf("\nError: Doctor ID %d does not exist!\n", did);
+        printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", did);
         pauseProg();
         return;
     }
@@ -1191,12 +1191,12 @@ void doctorPortal()
     while (1)
     {
         clearScreen();
-        printf("\n========== DOCTOR PORTAL ==========\n");
+        printf("\n========== \033[1;32m\n DOCTOR PORTAL \033[0m ==========\n\n");
         printf("1. View Patient List\n");
         printf("2. Write Prescription\n");
         printf("3. Update Medical Record\n");
         printf("4. View All Appointments\n");
-        printf("5. View Medical Records\n");
+        printf("5. View Medical Records\n\n");
         printf("6. Back to Main Menu\n");
         
         printf("\nEnter your choice: ");
@@ -1257,7 +1257,7 @@ void enterLabReport()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         pauseProg();
         return;
     }
@@ -1310,7 +1310,7 @@ void printLabReport()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         pauseProg();
         return;
     }
@@ -1395,10 +1395,10 @@ void labPortal()
     while (1)
     {
         clearScreen();
-        printf("\n========== LAB PORTAL ==========\n");
+        printf("\n==========\033[1;32m\n LAB PORTAL\033[0m ==========\n\n");
         printf("1. Enter Test Report\n");
         printf("2. Print Report\n");
-        printf("3. View All Lab Reports\n");
+        printf("3. View All Lab Reports\n\n");
         printf("4. Back to Main Menu\n");
         
         printf("\nEnter your choice: ");
@@ -1452,7 +1452,7 @@ void addStaff()
     /* Check if ID already exists */
     if (isStaffIdExists(s.id))
     {
-        printf("\nError: Staff ID %d already exists!\n", s.id);
+        printf("\n\033[1;31mError: Staff ID %d already exists!\033[0m\n", s.id);
         pauseProg();
         return;
     }
@@ -1524,7 +1524,7 @@ void removeStaff()
     /* Validate staff ID */
     if (!isStaffIdExists(id))
     {
-        printf("\nError: Staff ID %d does not exist!\n", id);
+        printf("\n\033[1;31mError: Staff ID %d does not exist!\033[0m\n", id);
         fclose(file);
         pauseProg();
         return;
@@ -1680,7 +1680,7 @@ void addDoctor()
     /* Check if ID already exists */
     if (isDoctorIdExists(d.id))
     {
-        printf("\nError: Doctor ID %d already exists!\n", d.id);
+        printf("\n\033[1;31mError: Doctor ID %d already exists!\033[0m\n", d.id);
         pauseProg();
         return;
     }
@@ -1752,7 +1752,7 @@ void removeDoctor()
     /* Validate doctor ID */
     if (!isDoctorIdExists(id))
     {
-        printf("\nError: Doctor ID %d does not exist!\n", id);
+        printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", id);
         fclose(file);
         pauseProg();
         return;
@@ -2143,7 +2143,7 @@ void viewMedicalRecords()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -2218,7 +2218,7 @@ void editPatientRecord()
     /* Validate patient ID */
     if (!isPatientIdExists(idToEdit))
     {
-        printf("\nError: Patient ID %d does not exist!\n", idToEdit);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", idToEdit);
         fclose(file);
         pauseProg();
         return;
@@ -2384,7 +2384,7 @@ void deletePatientRecord()
     /* Validate patient ID */
     if (!isPatientIdExists(idToDelete))
     {
-        printf("\nError: Patient ID %d does not exist!\n", idToDelete);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", idToDelete);
         fclose(file);
         pauseProg();
         return;
@@ -2547,7 +2547,7 @@ void editAppointment()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -2686,7 +2686,7 @@ void deleteAppointment()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -2836,7 +2836,7 @@ void editLabReport()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -2938,7 +2938,7 @@ void deleteLabReport()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -3077,7 +3077,7 @@ void editPrescription()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -3204,7 +3204,7 @@ void deletePrescription()
     /* Validate patient ID */
     if (!isPatientIdExists(pid))
     {
-        printf("\nError: Patient ID %d does not exist!\n", pid);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid);
         fclose(file);
         pauseProg();
         return;
@@ -3350,7 +3350,7 @@ void editStaffRecord()
     /* Validate staff ID */
     if (!isStaffIdExists(idToEdit))
     {
-        printf("\nError: Staff ID %d does not exist!\n", idToEdit);
+        printf("\n\033[1;31mError: Staff ID %d does not exist!\033[0m\n", idToEdit);
         fclose(file);
         pauseProg();
         return;
@@ -3477,7 +3477,7 @@ void deleteStaffRecord()
     /* Validate staff ID */
     if (!isStaffIdExists(idToDelete))
     {
-        printf("\nError: Staff ID %d does not exist!\n", idToDelete);
+        printf("\n\033[1;31mError: Staff ID %d does not exist!\033[0m\n", idToDelete);
         fclose(file);
         pauseProg();
         return;
@@ -3641,7 +3641,7 @@ void editDoctorRecord()
     /* Validate doctor ID */
     if (!isDoctorIdExists(idToEdit))
     {
-        printf("\nError: Doctor ID %d does not exist!\n", idToEdit);
+        printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", idToEdit);
         fclose(file);
         pauseProg();
         return;
@@ -3768,7 +3768,7 @@ void deleteDoctorRecord()
     /* Validate doctor ID */
     if (!isDoctorIdExists(idToDelete))
     {
-        printf("\nError: Doctor ID %d does not exist!\n", idToDelete);
+        printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", idToDelete);
         fclose(file);
         pauseProg();
         return;
@@ -4060,26 +4060,33 @@ void editDatabase()
     while (1)
     {
         clearScreen();
-        printf("\n========== EDIT DATABASE ==========\n");
+        printf("==========\033[1;32m\n EDIT DATABASE \033[0m==========\n\n");
+
         printf("1. View All Patients\n");
         printf("2. Edit Patient Record\n");
-        printf("3. Delete Patient Record\n");
+        printf("3. Delete Patient Record\n\n");
+
         printf("4. View All Appointments\n");
         printf("5. Edit Appointment\n");
-        printf("6. Delete Appointment\n");
+        printf("6. Delete Appointment\n\n");
+
         printf("7. View All Lab Reports\n");
         printf("8. Edit Lab Report\n");
-        printf("9. Delete Lab Report\n");
+        printf("9. Delete Lab Report\n\n");
         printf("10. View All Prescriptions\n");
+        
         printf("11. Edit Prescription\n");
-        printf("12. Delete Prescription\n");
+        printf("12. Delete Prescription\n\n");
         printf("13. View All Staff\n");
         printf("14. Edit Staff Record\n");
-        printf("15. Delete Staff Record\n");
+        printf("15. Delete Staff Record\n\n");
+
         printf("16. View All Doctors\n");
         printf("17. Edit Doctor Record\n");
-        printf("18. Delete Doctor Record\n");
-        printf("19. Generate System Report\n");
+        printf("18. Delete Doctor Record\n\n");
+
+        printf("19. Generate System Report\n\n");
+
         printf("20. Back to Admin Portal\n");
         
         printf("\nEnter your choice: ");
@@ -4176,13 +4183,13 @@ void adminPortal()
     while (1)
     {
         clearScreen();
-        printf("\n========== ADMIN PORTAL ==========\n");
+        printf("\n==========\033[1;32m\n ADMIN PORTAL \033[0m==========\n\n");
         printf("1. Add Staff\n");
-        printf("2. Remove Staff\n");
+        printf("2. Remove Staff\n\n");
         printf("3. Add Doctor\n");
-        printf("4. Remove Doctor\n");
+        printf("4. Remove Doctor\n\n");
         printf("5. Edit Database\n");
-        printf("6. View Feedbacks\n");
+        printf("6. View Feedbacks\n\n");
         printf("7. Back to Main Menu\n");
         
         printf("\nEnter your choice: ");
@@ -4376,7 +4383,7 @@ void findDoctorPortal()
     while (1)
     {
         clearScreen();
-        printf("\n========== FIND DOCTOR PORTAL ==========\n");
+        printf("\n========== \033[1;32m\n FIND DOCTOR PORTAL \033[0m ==========\n\n");
         printf("1. Search Doctor by Name\n");
         printf("2. Search Doctor by Specialization\n");
         printf("3. View All Doctors\n");
@@ -4423,28 +4430,36 @@ void contributionPortal()
           clearScreen();
 
  printf("\n|-------------------------------------------------|\n");
-    printf("|                                                |\n");
-    printf("|                 Team UpSideDown                |\n");
-    printf("|                                                |\n");
-    printf("|   Project : Hospital Management System (HMS)   |\n");
-    printf("|                                                |\n");
-    printf("|------------------------------------------------|\n\n\n");
-    printf(" # Team Members:\n\n");
-    printf("   - Member 1: Naim Hossain (ID: 252-15-178)\n");
-    printf("                                                     -Project Coordinator and developer\n");
-    printf("   - Member 2: Md Ajmine Adil Sadik (ID: 252-15-172)\n");
-    printf("                                                     -Project Structurer and developer\n");
-    printf("   - Member 3: Sadman Sakib Mahi (ID: 252-15-102)\n");
-    printf("                                                     - Developer\n");
-    printf("   - Member 4: Md Zihad Hasan (ID: 252-15-436)\n");
-    printf("                                                     - Developer\n");
-    printf("   - Member 5: Shahriar Ahmmed Limon (ID: 252-15-351)\n");
-    printf("                                                     - Developer\n");
-   
-    
-    printf("\n____________________________Thank You ! ____________________________\n");
+printf("|                                                |\n");
+printf("|                 \033[1;36mTeam UpSideDown\033[0m                |\n");  
+printf("|                                                |\n");
+printf("|   Project : \033[1;33mHospital Management System (HMS)\033[0m   |\n"); 
+printf("|                                                |\n");
+printf("|------------------------------------------------|\n\n\n");
 
-        printf("\n\nYour Choice :\n1.Back to main.\n");
+printf(" # Team Members:\n\n");
+
+printf("   - Member 1\033[1;32m: Naim Hossain\033[0m (ID: 252-15-178)\n");  
+printf("                           -Project Coordinator and developer\n\n");
+
+printf("   - Member 2\033[1;32m: Md Ajmine Adil Sadik\033[0m (ID: 252-15-172)\n");
+printf("                           -Project Structurer and developer\n\n");
+
+printf("   - Member 3\033[1;32m: Sadman Sakib Mahi\033[0m (ID: 252-15-102)\n");
+printf("                           - Developer\n\n");
+
+printf("   - Member 4\033[1;32m: Md Zihad Hasan\033[0m (ID: 252-15-436)\n");
+printf("                           - Developer\n\n");
+
+printf("   - Member 5\033[1;32m: Shahriar Ahmmed Limon\033[0m (ID: 252-15-351)\n");
+printf("                           - Developer\n\n");
+
+printf("\n____________________________Thank You ! ____________________________\n");
+
+
+         printf("\n1.Back to main.\n");
+        printf("\nYour Choice : ");
+           
      if (scanf("%d", &choice) == 1)
         {
 
@@ -4481,7 +4496,7 @@ void feedback()
     /* Validate patient ID if not anonymous */
     if (id != 0 && !isPatientIdExists(id))
     {
-        printf("\nError: Patient ID %d does not exist!\n", id);
+        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id);
         pauseProg();
         return;
     }
@@ -4512,21 +4527,33 @@ int main()
     while (1)
     {
         clearScreen();
-        printf("\n=====================================================\n");
-        printf("         WELCOME TO HOSPITAL MANAGEMENT SYSTEM\n");
-        printf("                     TEAM: UPSIDEDOWN\n");
-        printf("=====================================================\n");
+       
 
-        printf("\nChoose a Portal:\n");
-        printf("1. Reception\n");
-        printf("2. Patient\n");
-        printf("3. Doctor\n");
-        printf("4. Lab\n");
-        printf("5. Admin\n");
-        printf("6. Find Doctor\n");  // New portal option
-        printf("7. Team Details\n");
-        printf("8. Feedback\n");
-        printf("9. Exit\n");
+    printf("\n╔══════════════════════════════════════════════════════════════╗\n");
+    printf("║                                                              ║\n");
+    printf("║\033[1;33m\n           WELCOME TO HOSPITAL MANAGEMENT SYSTEM            \033[0m║\n");
+    printf("║\033[1;36m\n                  TEAM: UPSIDEDOWN                          \033[0m║\n");
+    printf("║                                                              ║\n");
+    printf("╚══════════════════════════════════════════════════════════════╝\n\n");
+    
+    printf("╔══════════════════════════════════════════════════════════════╗\n");
+    printf("║                       MAIN MENU                              ║\n");
+    printf("╠══════════════════════════════════════════════════════════════╣\n");
+    printf("║                                                              ║\n");
+    printf("║ 1. Reception Portal                                          ║\n");
+    printf("║ 2. Patient Portal                                            ║\n");
+    printf("║ 3. Doctor Portal                                             ║\n");
+    printf("║ 4. Lab Portal                                                ║\n");
+    printf("║                                                              ║\n");
+    printf("║ 5. Admin Portal                                              ║\n");
+    printf("║ 6. Find Doctor                                               ║\n");
+    printf("║ 7. Feedback                                                  ║\n");
+    printf("║                                                              ║\n");
+    printf("║ 8. Team Details                                              ║\n");
+    printf("║ 9. Exit System                                               ║\n");
+    printf("║                                                              ║\n");
+    printf("╚══════════════════════════════════════════════════════════════╝\n\n");
+
 
         printf("\nEnter your choice: ");
         if (scanf("%d", &choice) != 1)
@@ -4558,14 +4585,15 @@ int main()
             adminPortal();
             break;
         case 6:
-            findDoctorPortal();  // New portal
+            findDoctorPortal();  
             break;
         case 7:
-            contributionPortal();
-            break;
-        case 8:
             feedback();
             break;
+        case 8:
+             contributionPortal();
+             break;
+           
         case 9:
             printf("\nThank you for using the system!\n");
             exit(0);
