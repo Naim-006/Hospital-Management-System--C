@@ -566,7 +566,7 @@ void receptionPortal()
     while (1)
     {
         clearScreen();
-        printf("\n==========\033[1;32m\n RECEPTION PORTAL \033[0m==========\n\n");
+        printf("\n==========\033[1;32m RECEPTION PORTAL \033[0m==========\n\n");
         printf("1. Register New Patient\n");
         printf("2. Show All Registered Patients\n");
         printf("3. Search Patient by ID\n");
@@ -1001,7 +1001,7 @@ void patientPortal()
     while (1)
     {
         clearScreen();
-        printf("\n===============\033[1;32m\n PATIENT PORTAL \033[0m===============\n\n");
+        printf("\n===============\033[1;32m PATIENT PORTAL \033[0m===============\n\n");
         printf("1. View My Details\n");
         printf("2. View Appointments\n");
         printf("3. View Lab Reports\n");
@@ -1191,7 +1191,7 @@ void doctorPortal()
     while (1)
     {
         clearScreen();
-        printf("\n========== \033[1;32m\n DOCTOR PORTAL \033[0m ==========\n\n");
+        printf("\n========== \033[1;32m DOCTOR PORTAL \033[0m ==========\n\n");
         printf("1. View Patient List\n");
         printf("2. Write Prescription\n");
         printf("3. Update Medical Record\n");
@@ -1395,7 +1395,7 @@ void labPortal()
     while (1)
     {
         clearScreen();
-        printf("\n==========\033[1;32m\n LAB PORTAL\033[0m ==========\n\n");
+        printf("\n==========\033[1;32m LAB PORTAL\033[0m ==========\n\n");
         printf("1. Enter Test Report\n");
         printf("2. Print Report\n");
         printf("3. View All Lab Reports\n\n");
@@ -4060,7 +4060,7 @@ void editDatabase()
     while (1)
     {
         clearScreen();
-        printf("==========\033[1;32m\n EDIT DATABASE \033[0m==========\n\n");
+        printf("==========\033[1;32m EDIT DATABASE \033[0m==========\n\n");
 
         printf("1. View All Patients\n");
         printf("2. Edit Patient Record\n");
@@ -4183,7 +4183,7 @@ void adminPortal()
     while (1)
     {
         clearScreen();
-        printf("\n==========\033[1;32m\n ADMIN PORTAL \033[0m==========\n\n");
+        printf("\n==========\033[1;32m ADMIN PORTAL \033[0m==========\n\n");
         printf("1. Add Staff\n");
         printf("2. Remove Staff\n\n");
         printf("3. Add Doctor\n");
@@ -4383,7 +4383,7 @@ void findDoctorPortal()
     while (1)
     {
         clearScreen();
-        printf("\n========== \033[1;32m\n FIND DOCTOR PORTAL \033[0m ==========\n\n");
+        printf("\n========== \033[1;32m FIND DOCTOR PORTAL \033[0m ==========\n\n");
         printf("1. Search Doctor by Name\n");
         printf("2. Search Doctor by Specialization\n");
         printf("3. View All Doctors\n");
@@ -4529,30 +4529,35 @@ int main()
         clearScreen();
        
 
-    printf("\n╔══════════════════════════════════════════════════════════════╗\n");
-    printf("║                                                              ║\n");
-    printf("║\033[1;33m\n           WELCOME TO HOSPITAL MANAGEMENT SYSTEM            \033[0m║\n");
-    printf("║\033[1;36m\n                  TEAM: UPSIDEDOWN                          \033[0m║\n");
-    printf("║                                                              ║\n");
-    printf("╚══════════════════════════════════════════════════════════════╝\n\n");
-    
-    printf("╔══════════════════════════════════════════════════════════════╗\n");
-    printf("║                       MAIN MENU                              ║\n");
-    printf("╠══════════════════════════════════════════════════════════════╣\n");
-    printf("║                                                              ║\n");
-    printf("║ 1. Reception Portal                                          ║\n");
-    printf("║ 2. Patient Portal                                            ║\n");
-    printf("║ 3. Doctor Portal                                             ║\n");
-    printf("║ 4. Lab Portal                                                ║\n");
-    printf("║                                                              ║\n");
-    printf("║ 5. Admin Portal                                              ║\n");
-    printf("║ 6. Find Doctor                                               ║\n");
-    printf("║ 7. Feedback                                                  ║\n");
-    printf("║                                                              ║\n");
-    printf("║ 8. Team Details                                              ║\n");
-    printf("║ 9. Exit System                                               ║\n");
-    printf("║                                                              ║\n");
-    printf("╚══════════════════════════════════════════════════════════════╝\n\n");
+  
+   
+    printf("\n+------------------------------------------------------------+\n");
+    printf("|                                                            |\n");
+    printf("| \033[1;33m           WELCOME TO HOSPITAL MANAGEMENT SYSTEM           \033[0m|\n");
+    printf("| \033[1;36m                  TEAM: UPSIDEDOWN                         \033[0m|\n");
+    printf("|                                                            |\n");
+    printf("+------------------------------------------------------------+\n\n");
+
+    printf("+------------------------------------------------------------+\n");
+    printf("|                       MAIN MENU                            |\n");
+    printf("+------------------------------------------------------------+\n");
+    printf("|                                                            |\n");
+    printf("| 1. Reception Portal                                        |\n");
+    printf("| 2. Patient Portal                                          |\n");
+    printf("|                                                            |\n");
+    printf("| 3. Doctor Portal                                           |\n");
+    printf("| 4. Lab Portal                                              |\n");
+    printf("| 5. Admin Portal                                            |\n");
+    printf("|                                                            |\n");
+    printf("| 6. Find Doctor                                             |\n");
+    printf("| 7. Feedback                                                |\n");
+    printf("|                                                            |\n");
+    printf("| 8. Team Details                                            |\n");
+    printf("| 9. Exit System                                             |\n");
+    printf("|                                                            |\n");
+    printf("+------------------------------------------------------------+\n\n");
+
+ 
 
 
         printf("\nEnter your choice: ");
