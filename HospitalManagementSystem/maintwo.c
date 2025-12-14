@@ -34,50 +34,82 @@ struct Doctor
 
 
 /* Function declarations */
+
+//used in multiple portals //
+int authenticateAdmin();
+int authenticateReception();
 int isPatientIdExists(int id);
 int isDoctorIdExists(int id);
 void savePatient(struct Patient p);
+
+
+// reception portal 
+void receptionPortal();
+
+void bookAppointment();
 void showAllPatients();
 void searchPatient();
-void receptionPortal();
+
+//patient portal
 void patientPortal();
+
 void viewPatientDetails();
 void viewAppointments();
 void viewLabReports();
 void viewPrescriptions();
+
+//doctor portal
 void doctorPortal();
-void labPortal();
-void adminPortal();
-void manageDatabase();
-void findDoctorPortal();  
-void contributionPortal();
-void bookAppointment();
+
 void writePrescription();
-void enterLabReport();
+void viewAllLabReports();
+void viewAllPrescriptions();
+void viewAllAppointments();
 void updateMedicalRecord();
-void printLabReport();
+void viewMedicalRecords();
+
+//lab portal
+void labPortal();
+
+void enterLabReport();
+
+//admin portal
+void adminPortal();
+//--databasae--
+void manageDatabase();
+
 void addDoctor();
 void removeDoctor();
-void viewAllDoctors();
 void deletePatientRecord();
 void deleteAppointment();
 void deleteLabReport();
 void deletePrescription();
 void deleteDoctorRecord();
-void viewMedicalRecords();
-void viewAllAppointments();
-void viewAllLabReports();
-void viewAllPrescriptions();
 void generateSystemReport();
-int authenticateAdmin();
-int authenticateReception();
-void searchDoctorByName();
-void searchDoctorBySpecialization();
-char* getDoctorNameById(int id); 
 void deleteRecordInFile(const char* filename, int targetId, int numFields);
 
 
+
+//find doctor portal
+void findDoctorPortal();  
+
+void viewAllDoctors();
+void searchDoctorByName();
+void searchDoctorBySpecialization();
+char* getDoctorNameById(int id); 
+
+//developer
+void contributionPortal();
+
+
+
+
+
 //----starts funtions-------//
+
+
+
+//common functions 
 
 void clearScreen()
 {
@@ -206,6 +238,10 @@ int authenticateReception()
     }
     return 0;
 }
+
+//common end 
+
+
 
 // ========================================
 // MEMBER 1: Reception
