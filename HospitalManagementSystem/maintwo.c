@@ -32,18 +32,10 @@ struct Doctor
     char department[100];
 };
 
-struct Staff
-{
-    int id;
-    char name[100];
-    char position[50];
-    char department[100];
-};
 
 /* Function declarations */
 int isPatientIdExists(int id);
 int isDoctorIdExists(int id);
-int isStaffIdExists(int id);
 void savePatient(struct Patient p);
 void showAllPatients();
 void searchPatient();
@@ -56,31 +48,21 @@ void viewPrescriptions();
 void doctorPortal();
 void labPortal();
 void adminPortal();
+void manageDatabase();
 void findDoctorPortal();  
 void contributionPortal();
-void feedback();
 void bookAppointment();
 void writePrescription();
 void enterLabReport();
-void addStaff();
-void removeStaff();
 void updateMedicalRecord();
 void printLabReport();
 void addDoctor();
 void removeDoctor();
 void viewAllDoctors();
-void viewAllStaff();
-void editPatientRecord();
 void deletePatientRecord();
-void editAppointment();
 void deleteAppointment();
-void editLabReport();
 void deleteLabReport();
-void editPrescription();
 void deletePrescription();
-void editStaffRecord();
-void deleteStaffRecord();
-void editDoctorRecord();
 void deleteDoctorRecord();
 void viewMedicalRecords();
 void viewAllAppointments();
@@ -92,18 +74,10 @@ int authenticateReception();
 void searchDoctorByName();
 void searchDoctorBySpecialization();
 char* getDoctorNameById(int id); 
+void deleteRecordInFile(const char* filename, int targetId, int numFields);
 
-// --- Refactoring: Generic Record Modification ---
-typedef enum { ACTION_EDIT, ACTION_DELETE } ModifyAction;
-void modifyRecordInFile(const char* filename, int targetId, ModifyAction action, void (*editFunc)(char** tokens, int numFields), int numFields);
 
-// --- Refactoring: Specific Edit Logic Functions ---
-void editPatientLogic(char** tokens, int numFields);
-void editDoctorLogic(char** tokens, int numFields);
-void editStaffLogic(char** tokens, int numFields);
-void editAppointmentLogic(char** tokens, int numFields);
-void editLabReportLogic(char** tokens, int numFields);
-void editPrescriptionLogic(char** tokens, int numFields);
+//----starts funtions-------//
 
 void clearScreen()
 {
@@ -176,21 +150,6 @@ int isDoctorIdExists(int id)
     return 0;
 }
 
-int isStaffIdExists(int id)
-{
-    FILE *file = fopen("staff.txt", "r");
-    if (!file) return 0;
-    char line[512];
-    while (fgets(line, sizeof(line), file)) {
-        char *tok = strtok(line, "|");
-        if (tok && atoi(tok) == id) { 
-            fclose(file); 
-            return 1; 
-        }
-    }
-    fclose(file);
-    return 0;
-}
 
 char* getDoctorNameById(int id)
 {
@@ -247,6 +206,50 @@ int authenticateReception()
     }
     return 0;
 }
+
+// ========================================
+// MEMBER 1: Reception
+// ========================================
+void patientPortal()
+{
+    int choice;
+    while (1) {
+        clearScreen();
+        printf("\n===============\033[1;32m PATIENT PORTAL \033[0m===============\n\n");
+        printf("1. View My Details\n"); 
+        printf("2. View Appointments\n"); 
+        printf("3. View Lab Reports\n"); 
+        printf("4. View Prescriptions\n\n"); 
+        printf("5. Back to Main Menu\n");
+        printf("\nEnter your choice: "); 
+        if (scanf("%d", &choice) != 1) { 
+            while (getchar() != '\n') {} 
+            choice = 0; 
+        } 
+        while (getchar() != '\n') {}
+        switch (choice) {
+            case 1: 
+                viewPatientDetails(); 
+                break; 
+            case 2: 
+                viewAppointments(); 
+                break;
+            case 3: 
+                viewLabReports(); 
+                break; 
+            case 4: 
+                viewPrescriptions(); 
+                break;
+            case 5: 
+                return; 
+            default: 
+                printf("\nInvalid Input!\033[0m\n"); 
+                pauseProg();
+        }
+    }
+}
+
+//--------------functions--------------//
 
 void savePatient(struct Patient p)
 {
@@ -398,9 +401,8 @@ void receptionPortal()
         printf("1. Register New Patient\n"); 
         printf("2. Show All Registered Patients\n"); 
         printf("3. Search Patient by ID\n");
-        printf("4. Book Appointment\n"); 
-        printf("5. Edit Patient Details\n\n"); 
-        printf("6. Back to Main Menu\n");
+        printf("4. Book Appointment\n\n"); 
+        printf("5. Back to Main Menu\n");
         printf("\nEnter your choice: "); 
         if (scanf("%d", &choice) != 1) { 
             while (getchar() != '\n') {} 
@@ -455,9 +457,6 @@ void receptionPortal()
                 bookAppointment(); 
                 break;
             case 5: 
-                editPatientRecord(); 
-                break;
-            case 6: 
                 return;
             default: 
                 printf("\nInvalid choice!\n"); 
@@ -670,17 +669,21 @@ void viewPrescriptions()
     pauseProg();
 }
 
-void patientPortal()
+// ========================================
+//         doctor portal
+// ========================================
+void doctorPortal()
 {
     int choice;
     while (1) {
         clearScreen();
-        printf("\n===============\033[1;32m PATIENT PORTAL \033[0m===============\n\n");
-        printf("1. View My Details\n"); 
-        printf("2. View Appointments\n"); 
-        printf("3. View Lab Reports\n"); 
-        printf("4. View Prescriptions\n\n"); 
-        printf("5. Back to Main Menu\n");
+        printf("\n========== \033[1;32m DOCTOR PORTAL \033[0m ==========\n\n");
+        printf("1. View Patient List\n"); 
+        printf("2. Write Prescription\n"); 
+        printf("3. Update Medical Record\n");
+        printf("4. View All Appointments\n"); 
+        printf("5. View Medical Records\n\n"); 
+        printf("6. Back to Main Menu\n");
         printf("\nEnter your choice: "); 
         if (scanf("%d", &choice) != 1) { 
             while (getchar() != '\n') {} 
@@ -689,25 +692,31 @@ void patientPortal()
         while (getchar() != '\n') {}
         switch (choice) {
             case 1: 
-                viewPatientDetails(); 
+                showAllPatients(); 
                 break; 
             case 2: 
-                viewAppointments(); 
-                break;
-            case 3: 
-                viewLabReports(); 
+                writePrescription(); 
                 break; 
-            case 4: 
-                viewPrescriptions(); 
+            case 3: 
+                updateMedicalRecord(); 
                 break;
+            case 4: 
+                viewAllAppointments(); 
+                break; 
             case 5: 
-                return; 
+                viewMedicalRecords(); 
+                break; 
+            case 6: 
+                return;
             default: 
-                printf("\nInvalid Input!\033[0m\n"); 
+                printf("\nInvalid choice!\n"); 
                 pauseProg();
         }
     }
 }
+
+
+//-------funnctios ----------//
 
 void writePrescription()
 {
@@ -801,18 +810,19 @@ void updateMedicalRecord()
     pauseProg();
 }
 
-void doctorPortal()
+
+// ========================================
+// MEMBER 3: lab portal
+// ========================================
+void labPortal()
 {
     int choice;
     while (1) {
         clearScreen();
-        printf("\n========== \033[1;32m DOCTOR PORTAL \033[0m ==========\n\n");
-        printf("1. View Patient List\n"); 
-        printf("2. Write Prescription\n"); 
-        printf("3. Update Medical Record\n");
-        printf("4. View All Appointments\n"); 
-        printf("5. View Medical Records\n\n"); 
-        printf("6. Back to Main Menu\n");
+        printf("\n==========\033[1;32m LAB PORTAL\033[0m ==========\n\n");
+        printf("1. Enter Test Report\n"); 
+        printf("2. View All Lab Reports\n\n"); 
+        printf("3. Back to Main Menu\n");
         printf("\nEnter your choice: "); 
         if (scanf("%d", &choice) != 1) { 
             while (getchar() != '\n') {} 
@@ -821,28 +831,21 @@ void doctorPortal()
         while (getchar() != '\n') {}
         switch (choice) {
             case 1: 
-                showAllPatients(); 
+                enterLabReport(); 
                 break; 
+            
             case 2: 
-                writePrescription(); 
-                break; 
-            case 3: 
-                updateMedicalRecord(); 
+                viewAllLabReports(); 
                 break;
-            case 4: 
-                viewAllAppointments(); 
-                break; 
-            case 5: 
-                viewMedicalRecords(); 
-                break; 
-            case 6: 
-                return;
+            case 3: 
+                return; 
             default: 
                 printf("\nInvalid choice!\n"); 
                 pauseProg();
         }
     }
 }
+//-------functiosn-----------//
 
 void enterLabReport()
 {
@@ -877,83 +880,51 @@ void enterLabReport()
     pauseProg();
 }
 
-void printLabReport()
+void viewAllLabReports()
 {
-    int pid; 
-    char filename[100]; 
-    FILE *srcFile, *destFile; 
-    char line[1024]; 
-    int found = 0;
-    printf("\nEnter Patient ID: "); 
-    if (scanf("%d", &pid) != 1) { 
-        while (getchar() != '\n') {} 
-        printf("Invalid Patient ID.\n"); 
-        pauseProg(); 
-        return; 
-    } 
-    while (getchar() != '\n') {}
-    if (!isPatientIdExists(pid)) { 
-        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", pid); 
-        pauseProg(); 
-        return; 
-    }
-    sprintf(filename, "patient_%d_report.txt", pid);
-    srcFile = fopen("labreports.txt", "r"); 
-    if (!srcFile) { 
+    FILE *file = fopen("labreports.txt", "r"); 
+    if (!file) { 
         printf("\nNo lab reports found.\n"); 
         pauseProg(); 
         return; 
     }
-    destFile = fopen(filename, "w"); 
-    if (!destFile) { 
-        perror("Error creating report file"); 
-        fclose(srcFile); 
-        pauseProg(); 
-        return; 
-    }
-    fprintf(destFile, "LAB REPORT FOR PATIENT ID: %d\n=====================================\n\n", pid);
-    while (fgets(line, sizeof(line), srcFile)) {
+    char line[1024]; 
+    printf("\n==== All Lab Reports ====\n\n");
+    while (fgets(line, sizeof(line), file)) {
         char *tok; 
-        int id; 
+        int pid; 
         char report[900] = {0};
         tok = strtok(line, "|"); 
         if (!tok) continue; 
-        id = atoi(tok); 
-        if (id != pid) continue;
+        pid = atoi(tok);
         tok = strtok(NULL, "|\n"); 
         if (tok) strncpy(report, tok, sizeof(report) - 1); 
         trim(report);
-        fprintf(destFile, "Report: %s\n-------------------------------------\n", report); 
-        found = 1;
+        printf("Patient ID: %d\nReport: %s\n--------------\n", pid, report);
     }
-    fclose(srcFile); 
-    fclose(destFile);
-    if (found) {
-        printf("\nLab report printed to file: %s\n", filename);
-        printf("\n====== Lab Report Preview ======\n"); 
-        srcFile = fopen(filename, "r");
-        if (srcFile) { 
-            while (fgets(line, sizeof(line), srcFile)) { 
-                printf("%s", line); 
-            } 
-            fclose(srcFile); 
-        }
-    } else { 
-        printf("\nNo lab report found for this patient.\n"); 
-        remove(filename); 
-    }
+    fclose(file); 
     pauseProg();
 }
 
-void labPortal()
+
+// ========================================
+// MEMBER 4: admin portal
+// ========================================
+
+void adminPortal()
 {
+    if (!authenticateAdmin()) { 
+        printf("\nAuthentication failed. Access denied.\n"); 
+        pauseProg(); 
+        return; 
+    }
     int choice;
     while (1) {
-        clearScreen();
-        printf("\n==========\033[1;32m LAB PORTAL\033[0m ==========\n\n");
-        printf("1. Enter Test Report\n"); 
-        printf("2. Print Report\n"); 
-        printf("3. View All Lab Reports\n\n"); 
+        clearScreen(); 
+        printf("\n==========\033[1;32m ADMIN PORTAL \033[0m==========\n\n");
+        printf("1. Add Doctor\n"); 
+        printf("2. Remove Doctor\n\n");
+        printf("3. Manage Database\n"); 
         printf("4. Back to Main Menu\n");
         printf("\nEnter your choice: "); 
         if (scanf("%d", &choice) != 1) { 
@@ -962,17 +933,19 @@ void labPortal()
         } 
         while (getchar() != '\n') {}
         switch (choice) {
+          
             case 1: 
-                enterLabReport(); 
+                addDoctor(); 
                 break; 
             case 2: 
-                printLabReport(); 
-                break; 
-            case 3: 
-                viewAllLabReports(); 
+                removeDoctor(); 
                 break;
+            case 3: 
+                manageDatabase(); 
+                break; 
+          
             case 4: 
-                return; 
+                return;
             default: 
                 printf("\nInvalid choice!\n"); 
                 pauseProg();
@@ -980,71 +953,8 @@ void labPortal()
     }
 }
 
-void addStaff()
-{
-    struct Staff s;
-    printf("\nEnter Staff ID: "); 
-    if (scanf("%d", &s.id) != 1) { 
-        while (getchar() != '\n') {} 
-        printf("Invalid ID.\n"); 
-        pauseProg(); 
-        return; 
-    } 
-    while (getchar() != '\n') {}
-    if (isStaffIdExists(s.id)) { 
-        printf("\n\033[1;31mError: Staff ID %d already exists!\033[0m\n", s.id); 
-        pauseProg(); 
-        return; 
-    }
-    printf("Enter Staff Name: "); 
-    read_line(s.name, sizeof(s.name));
-    printf("Enter Staff Position: "); 
-    read_line(s.position, sizeof(s.position));
-    printf("Enter Department: "); 
-    read_line(s.department, sizeof(s.department));
-    trim(s.name); trim(s.position); trim(s.department);
-    FILE *file = fopen("staff.txt", "a"); 
-    if (!file) { 
-        perror("Error opening staff.txt"); 
-        pauseProg(); 
-        return; 
-    }
-    for (char *q = s.name; *q; ++q) if (*q == '|') *q = ' ';
-    for (char *q = s.position; *q; ++q) if (*q == '|') *q = ' ';
-    for (char *q = s.department; *q; ++q) if (*q == '|') *q = ' ';
-    fprintf(file, "%d|%s|%s|%s\n", s.id, s.name, s.position, s.department); 
-    fclose(file);
-    printf("\nStaff member added successfully!\n"); 
-    pauseProg();
-}
 
-void removeStaff()
-{
-    int id; 
-    printf("\nEnter Staff ID to remove: "); 
-    if (scanf("%d", &id) != 1) { 
-        while (getchar() != '\n') {} 
-        printf("Invalid input.\n"); 
-        pauseProg(); 
-        return; 
-    } 
-    while (getchar() != '\n') {}
-    if (!isStaffIdExists(id)) { 
-        printf("\n\033[1;31mError: Staff ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-        return; 
-    }
-    printf("\nAre you sure you want to delete this staff member? (y/n): ");
-    char confirm; 
-    scanf(" %c", &confirm); 
-    while (getchar() != '\n') {}
-    if (confirm == 'y' || confirm == 'Y') 
-        modifyRecordInFile("staff.txt", id, ACTION_DELETE, NULL, 4);
-    else { 
-        printf("\nDeletion cancelled.\n"); 
-        pauseProg(); 
-    }
-}
+// -------funtions ---------------//
 
 void addDoctor()
 {
@@ -1105,12 +1015,87 @@ void removeDoctor()
     scanf(" %c", &confirm); 
     while (getchar() != '\n') {}
     if (confirm == 'y' || confirm == 'Y') 
-        modifyRecordInFile("doctors.txt", id, ACTION_DELETE, NULL, 4);
+        deleteRecordInFile("doctors.txt", id, 4);
     else { 
         printf("\nDeletion cancelled.\n"); 
         pauseProg(); 
     }
 }
+
+
+// ========================================
+//     admin database 
+// ========================================
+void manageDatabase()
+{
+    int choice;
+    while (1) {
+        clearScreen(); 
+        printf("==========\033[1;32m MANAGE DATABASE \033[0m==========\n\n");
+        printf("1. View All Patients\n"); 
+        printf("2. Delete Patient Record\n\n");
+        printf("3. View All Appointments\n"); 
+        printf("4. Delete Appointment\n\n");
+        printf("5. View All Lab Reports\n"); 
+        printf("6. Delete Lab Report\n\n");
+        printf("7. View All Prescriptions\n"); 
+        printf("8. Delete Prescription\n\n");
+
+        printf("9. View All Doctors\n"); 
+        printf("10. Delete Doctor Record\n\n");
+        printf("11. Generate System Report\n\n"); 
+        printf("12. Back to Admin Portal\n");
+        printf("\nEnter your choice: "); 
+        if (scanf("%d", &choice) != 1) { 
+            while (getchar() != '\n') {} 
+            choice = 0; 
+        } 
+        while (getchar() != '\n') {}
+        switch (choice) {
+            case 1: 
+                showAllPatients(); 
+                break; 
+            case 2: 
+                deletePatientRecord(); 
+                break;
+            case 3: 
+                viewAllAppointments(); 
+                break; 
+            case 4: 
+                deleteAppointment(); 
+                break;
+            case 5: 
+                viewAllLabReports(); 
+                break; 
+            case 6: 
+                deleteLabReport(); 
+                break;
+            case 7: 
+                viewAllPrescriptions(); 
+                break; 
+            case 8: 
+                deletePrescription(); 
+                break;
+           
+            case 9: 
+                viewAllDoctors(); 
+                break; 
+            case 10: 
+                deleteDoctorRecord(); 
+                break;
+            case 11: 
+                generateSystemReport(); 
+                break; 
+            case 12: 
+                return;
+            default: 
+                printf("\nInvalid choice!\n"); 
+                pauseProg();
+        }
+    }
+}
+
+//------funtions for database------
 
 void viewAllDoctors()
 {
@@ -1143,36 +1128,6 @@ void viewAllDoctors()
     pauseProg();
 }
 
-void viewAllStaff()
-{
-    FILE *file = fopen("staff.txt", "r"); 
-    if (!file) { 
-        printf("\nNo staff records found.\n"); 
-        pauseProg(); 
-        return; 
-    }
-    char line[512]; 
-    printf("\n==== Staff List ====\n\n");
-    while (fgets(line, sizeof(line), file)) {
-        char *tok; 
-        int id; 
-        char name[100] = {0}, position[50] = {0}, department[100] = {0};
-        tok = strtok(line, "|"); 
-        if (!tok) continue; 
-        id = atoi(tok);
-        tok = strtok(NULL, "|"); 
-        if (tok) strncpy(name, tok, sizeof(name) - 1);
-        tok = strtok(NULL, "|"); 
-        if (tok) strncpy(position, tok, sizeof(position) - 1);
-        tok = strtok(NULL, "|\n"); 
-        if (tok) strncpy(department, tok, sizeof(department) - 1);
-        trim(name); trim(position); trim(department);
-        printf("ID: %d\nName: %s\nPosition: %s\nDepartment: %s\n--------------\n", 
-               id, name, position, department);
-    }
-    fclose(file); 
-    pauseProg();
-}
 
 void viewAllAppointments()
 {
@@ -1206,31 +1161,6 @@ void viewAllAppointments()
     pauseProg();
 }
 
-void viewAllLabReports()
-{
-    FILE *file = fopen("labreports.txt", "r"); 
-    if (!file) { 
-        printf("\nNo lab reports found.\n"); 
-        pauseProg(); 
-        return; 
-    }
-    char line[1024]; 
-    printf("\n==== All Lab Reports ====\n\n");
-    while (fgets(line, sizeof(line), file)) {
-        char *tok; 
-        int pid; 
-        char report[900] = {0};
-        tok = strtok(line, "|"); 
-        if (!tok) continue; 
-        pid = atoi(tok);
-        tok = strtok(NULL, "|\n"); 
-        if (tok) strncpy(report, tok, sizeof(report) - 1); 
-        trim(report);
-        printf("Patient ID: %d\nReport: %s\n--------------\n", pid, report);
-    }
-    fclose(file); 
-    pauseProg();
-}
 
 void viewAllPrescriptions()
 {
@@ -1314,124 +1244,8 @@ void viewMedicalRecords()
     pauseProg();
 }
 
-// ===================================================================
-// == REFACTORED EDIT/DELETE FUNCTIONS START HERE ==
-// ===================================================================
 
-void editPatientLogic(char** tokens, int numFields) {
-    printf("\nCurrent Details:\nID: %s, Name: %s, Age: %s, Gender: %s, Blood: %s, Mobile: %s\n", 
-           tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
-    printf("\nEnter new Name (leave blank to keep current): "); 
-    char newName[100]; 
-    read_line(newName, sizeof(newName)); 
-    if (strlen(newName) > 0) tokens[1] = strdup(newName);
-    printf("Enter new Age (0 to keep current): "); 
-    int newAge; 
-    if (scanf("%d", &newAge) == 1 && newAge > 0) { 
-        char buf[20]; 
-        sprintf(buf, "%d", newAge); 
-        tokens[2] = strdup(buf); 
-    } 
-    while (getchar() != '\n') {}
-    printf("Enter new Gender (leave blank to keep current): "); 
-    char newGender[20]; 
-    read_line(newGender, sizeof(newGender)); 
-    if (strlen(newGender) > 0) tokens[3] = strdup(newGender);
-    printf("Enter new Blood Group (leave blank to keep current): "); 
-    char newBg[5]; 
-    read_line(newBg, sizeof(newBg)); 
-    if (strlen(newBg) > 0) tokens[4] = strdup(newBg);
-    printf("Enter new Mobile (leave blank to keep current): "); 
-    char newMobile[15]; 
-    read_line(newMobile, sizeof(newMobile)); 
-    if (strlen(newMobile) > 0) tokens[5] = strdup(newMobile);
-}
-
-void editDoctorLogic(char** tokens, int numFields) {
-    printf("\nCurrent Details:\nID: %s, Name: %s, Spec: %s, Dept: %s\n", 
-           tokens[0], tokens[1], tokens[2], tokens[3]);
-    printf("\nEnter new Name (leave blank to keep current): "); 
-    char newName[100]; 
-    read_line(newName, sizeof(newName)); 
-    if (strlen(newName) > 0) tokens[1] = strdup(newName);
-    printf("Enter new Specialization (leave blank to keep current): "); 
-    char newSpec[100]; 
-    read_line(newSpec, sizeof(newSpec)); 
-    if (strlen(newSpec) > 0) tokens[2] = strdup(newSpec);
-    printf("Enter new Department (leave blank to keep current): "); 
-    char newDept[100]; 
-    read_line(newDept, sizeof(newDept)); 
-    if (strlen(newDept) > 0) tokens[3] = strdup(newDept);
-}
-
-void editStaffLogic(char** tokens, int numFields) {
-    printf("\nCurrent Details:\nID: %s, Name: %s, Position: %s, Dept: %s\n", 
-           tokens[0], tokens[1], tokens[2], tokens[3]);
-    printf("\nEnter new Name (leave blank to keep current): "); 
-    char newName[100]; 
-    read_line(newName, sizeof(newName)); 
-    if (strlen(newName) > 0) tokens[1] = strdup(newName);
-    printf("Enter new Position (leave blank to keep current): "); 
-    char newPos[50]; 
-    read_line(newPos, sizeof(newPos)); 
-    if (strlen(newPos) > 0) tokens[2] = strdup(newPos);
-    printf("Enter new Department (leave blank to keep current): "); 
-    char newDept[100]; 
-    read_line(newDept, sizeof(newDept)); 
-    if (strlen(newDept) > 0) tokens[3] = strdup(newDept);
-}
-
-void editAppointmentLogic(char** tokens, int numFields) {
-    char* doctorName = getDoctorNameById(atoi(tokens[1]));
-    printf("\nCurrent Appointment Details:\nPatient ID: %s, Doctor: %s (ID: %s), Date: %s, Time: %s\n", 
-           tokens[0], doctorName, tokens[1], tokens[2], tokens[3]);
-    printf("\nEnter new Doctor ID (0 to keep current): "); 
-    int newDid; 
-    if (scanf("%d", &newDid) == 1 && newDid > 0 && isDoctorIdExists(newDid)) { 
-        char buf[20]; 
-        sprintf(buf, "%d", newDid); 
-        tokens[1] = strdup(buf); 
-    } 
-    else if(newDid > 0) printf("\nWarning: Doctor ID %d does not exist. Keeping current.\n", newDid); 
-    while (getchar() != '\n') {}
-    printf("Enter new Date (leave blank to keep current): "); 
-    char newDate[64]; 
-    read_line(newDate, sizeof(newDate)); 
-    if (strlen(newDate) > 0) tokens[2] = strdup(newDate);
-    printf("Enter new Time (leave blank to keep current): "); 
-    char newTime[64]; 
-    read_line(newTime, sizeof(newTime)); 
-    if (strlen(newTime) > 0) tokens[3] = strdup(newTime);
-}
-
-void editLabReportLogic(char** tokens, int numFields) {
-    printf("\nCurrent Lab Report:\nPatient ID: %s, Report: %s\n", tokens[0], tokens[1]);
-    printf("\nEnter new Report Details (leave blank to keep current): "); 
-    char newReport[900]; 
-    read_line(newReport, sizeof(newReport)); 
-    if (strlen(newReport) > 0) tokens[1] = strdup(newReport);
-}
-
-void editPrescriptionLogic(char** tokens, int numFields) {
-    char* doctorName = getDoctorNameById(atoi(tokens[1]));
-    printf("\nCurrent Prescription:\nPatient ID: %s, Doctor: %s (ID: %s), Prescription: %s\n", 
-           tokens[0], doctorName, tokens[1], tokens[2]);
-    printf("\nEnter new Doctor ID (0 to keep current): "); 
-    int newDid; 
-    if (scanf("%d", &newDid) == 1 && newDid > 0 && isDoctorIdExists(newDid)) { 
-        char buf[20]; 
-        sprintf(buf, "%d", newDid); 
-        tokens[1] = strdup(buf); 
-    } 
-    else if(newDid > 0) printf("\nWarning: Doctor ID %d does not exist. Keeping current.\n", newDid); 
-    while (getchar() != '\n') {}
-    printf("Enter new Prescription Details (leave blank to keep current): "); 
-    char newPres[900]; 
-    read_line(newPres, sizeof(newPres)); 
-    if (strlen(newPres) > 0) tokens[2] = strdup(newPres);
-}
-
-void modifyRecordInFile(const char* filename, int targetId, ModifyAction action, void (*editFunc)(char**, int), int numFields) {
+void deleteRecordInFile(const char* filename, int targetId, int numFields) {
     FILE *file = fopen(filename, "r"); 
     if (!file) { 
         printf("\nNo records found in %s.\n", filename); 
@@ -1459,17 +1273,11 @@ void modifyRecordInFile(const char* filename, int targetId, ModifyAction action,
         int currentId = atoi(tokens[0]);
         if (currentId == targetId) {
             found = 1;
-            if (action == ACTION_DELETE) { 
-                free(line_copy); 
-                continue; 
-            }
-            if (action == ACTION_EDIT && editFunc) { 
-                editFunc(tokens, numFields); 
-            }
+            free(line_copy); 
+            continue; 
         }
-        for (int j = 0; j < i; j++) { 
-            fprintf(temp, "%s%s", tokens[j], (j < i - 1) ? "|" : "\n"); 
-        }
+      
+        fputs(line, temp);
         free(line_copy);
     }
     fclose(file); 
@@ -1477,28 +1285,13 @@ void modifyRecordInFile(const char* filename, int targetId, ModifyAction action,
     if (found) { 
         remove(filename); 
         rename("temp.txt", filename); 
-        printf("\nOperation completed successfully!\n"); 
+        printf("\nRecord deleted successfully!\n"); 
     }
     else { 
         remove("temp.txt"); 
         printf("\nRecord with ID %d not found!\n", targetId); 
     }
     pauseProg();
-}
-
-void editPatientRecord() { 
-    int id; 
-    printf("\nEnter Patient ID to edit: "); 
-    if (scanf("%d", &id) != 1) { 
-        while(getchar()!='\n'){} 
-    } 
-    while(getchar()!='\n'){} 
-    if(isPatientIdExists(id)) 
-        modifyRecordInFile("patients.txt", id, ACTION_EDIT, editPatientLogic, 6); 
-    else { 
-        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-    } 
 }
 
 void deletePatientRecord() { 
@@ -1509,24 +1302,9 @@ void deletePatientRecord() {
     } 
     while(getchar()!='\n'){} 
     if(isPatientIdExists(id)) 
-        modifyRecordInFile("patients.txt", id, ACTION_DELETE, NULL, 6); 
+        deleteRecordInFile("patients.txt", id, 6); 
     else { 
         printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-    } 
-}
-
-void editDoctorRecord() { 
-    int id; 
-    printf("\nEnter Doctor ID to edit: "); 
-    if (scanf("%d", &id) != 1) { 
-        while(getchar()!='\n'){} 
-    } 
-    while(getchar()!='\n'){} 
-    if(isDoctorIdExists(id)) 
-        modifyRecordInFile("doctors.txt", id, ACTION_EDIT, editDoctorLogic, 4); 
-    else { 
-        printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", id); 
         pauseProg(); 
     } 
 }
@@ -1539,57 +1317,13 @@ void deleteDoctorRecord() {
     } 
     while(getchar()!='\n'){} 
     if(isDoctorIdExists(id)) 
-        modifyRecordInFile("doctors.txt", id, ACTION_DELETE, NULL, 4); 
+        deleteRecordInFile("doctors.txt", id, 4); 
     else { 
         printf("\n\033[1;31mError: Doctor ID %d does not exist!\033[0m\n", id); 
         pauseProg(); 
     } 
 }
 
-void editStaffRecord() { 
-    int id; 
-    printf("\nEnter Staff ID to edit: "); 
-    if (scanf("%d", &id) != 1) { 
-        while(getchar()!='\n'){} 
-    } 
-    while(getchar()!='\n'){} 
-    if(isStaffIdExists(id)) 
-        modifyRecordInFile("staff.txt", id, ACTION_EDIT, editStaffLogic, 4); 
-    else { 
-        printf("\n\033[1;31mError: Staff ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-    } 
-}
-
-void deleteStaffRecord() { 
-    int id; 
-    printf("\nEnter Staff ID to delete: "); 
-    if (scanf("%d", &id) != 1) { 
-        while(getchar()!='\n'){} 
-    } 
-    while(getchar()!='\n'){} 
-    if(isStaffIdExists(id)) 
-        modifyRecordInFile("staff.txt", id, ACTION_DELETE, NULL, 4); 
-    else { 
-        printf("\n\033[1;31mError: Staff ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-    } 
-}
-
-void editAppointment() { 
-    int id; 
-    printf("\nEnter Patient ID for the appointment to edit: "); 
-    if (scanf("%d", &id) != 1) { 
-        while(getchar()!='\n'){} 
-    } 
-    while(getchar()!='\n'){} 
-    if(isPatientIdExists(id)) 
-        modifyRecordInFile("appointments.txt", id, ACTION_EDIT, editAppointmentLogic, 4); 
-    else { 
-        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-    } 
-}
 
 void deleteAppointment() { 
     int id; 
@@ -1599,22 +1333,7 @@ void deleteAppointment() {
     } 
     while(getchar()!='\n'){} 
     if(isPatientIdExists(id)) 
-        modifyRecordInFile("appointments.txt", id, ACTION_DELETE, NULL, 4); 
-    else { 
-        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-    } 
-}
-
-void editLabReport() { 
-    int id; 
-    printf("\nEnter Patient ID for the lab report to edit: "); 
-    if (scanf("%d", &id) != 1) { 
-        while(getchar()!='\n'){} 
-    } 
-    while(getchar()!='\n'){} 
-    if(isPatientIdExists(id)) 
-        modifyRecordInFile("labreports.txt", id, ACTION_EDIT, editLabReportLogic, 2); 
+        deleteRecordInFile("appointments.txt", id, 4); 
     else { 
         printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
         pauseProg(); 
@@ -1629,22 +1348,7 @@ void deleteLabReport() {
     } 
     while(getchar()!='\n'){} 
     if(isPatientIdExists(id)) 
-        modifyRecordInFile("labreports.txt", id, ACTION_DELETE, NULL, 2); 
-    else { 
-        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-    } 
-}
-
-void editPrescription() { 
-    int id; 
-    printf("\nEnter Patient ID for the prescription to edit: "); 
-    if (scanf("%d", &id) != 1) { 
-        while(getchar()!='\n'){} 
-    } 
-    while(getchar()!='\n'){} 
-    if(isPatientIdExists(id)) 
-        modifyRecordInFile("prescriptions.txt", id, ACTION_EDIT, editPrescriptionLogic, 3); 
+        deleteRecordInFile("labreports.txt", id, 2); 
     else { 
         printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
         pauseProg(); 
@@ -1659,26 +1363,21 @@ void deletePrescription() {
     } 
     while(getchar()!='\n'){} 
     if(isPatientIdExists(id)) 
-        modifyRecordInFile("prescriptions.txt", id, ACTION_DELETE, NULL, 3); 
+        deleteRecordInFile("prescriptions.txt", id, 3); 
     else { 
         printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
         pauseProg(); 
     } 
 }
 
-// ===================================================================
-// == REFACTORED EDIT/DELETE FUNCTIONS END HERE ==
-// ===================================================================
-
 void generateSystemReport()
 {
     FILE *patients = fopen("patients.txt", "r"), 
          *doctors = fopen("doctors.txt", "r"), 
-         *staff = fopen("staff.txt", "r"), 
          *appointments = fopen("appointments.txt", "r"), 
          *labreports = fopen("labreports.txt", "r"), 
          *prescriptions = fopen("prescriptions.txt", "r");
-    int patientCount = 0, doctorCount = 0, staffCount = 0, appointmentCount = 0, labReportCount = 0, prescriptionCount = 0; 
+    int patientCount = 0, doctorCount = 0, appointmentCount = 0, labReportCount = 0, prescriptionCount = 0; 
     char line[1024];
     if (patients) { 
         while (fgets(line, sizeof(line), patients)) patientCount++; 
@@ -1687,10 +1386,6 @@ void generateSystemReport()
     if (doctors) { 
         while (fgets(line, sizeof(line), doctors)) doctorCount++; 
         fclose(doctors); 
-    }
-    if (staff) { 
-        while (fgets(line, sizeof(line), staff)) staffCount++; 
-        fclose(staff); 
     }
     if (appointments) { 
         while (fgets(line, sizeof(line), appointments)) appointmentCount++; 
@@ -1708,200 +1403,54 @@ void generateSystemReport()
     printf("\n========== SYSTEM REPORT ==========\n\n");
     printf("Total Patients: %d\n", patientCount); 
     printf("Total Doctors: %d\n", doctorCount); 
-    printf("Total Staff: %d\n", staffCount);
     printf("Total Appointments: %d\n", appointmentCount); 
     printf("Total Lab Reports: %d\n", labReportCount); 
     printf("Total Prescriptions: %d\n", prescriptionCount);
     pauseProg();
 }
 
-void viewFeedback()
-{
-    FILE *file = fopen("feedback.txt", "r"); 
-    if (!file) { 
-        printf("\nNo feedback records found.\n"); 
-        pauseProg(); 
-        return; 
-    }
-    char line[1024]; 
-    int found = 0, feedbackCount = 0; 
-    printf("\n==== All Feedback ====\n\n");
-    rewind(file); 
-    while (fgets(line, sizeof(line), file)) { 
-        feedbackCount++; 
-    }
-    printf("Total Feedback Entries: %d\n\n", feedbackCount);
-    rewind(file);
-    while (fgets(line, sizeof(line), file)) {
-        char *tok; 
-        int id; 
-        char feedback[900] = {0};
-        tok = strtok(line, "|"); 
-        if (!tok) continue; 
-        id = atoi(tok);
-        tok = strtok(NULL, "|\n"); 
-        if (tok) strncpy(feedback, tok, sizeof(feedback) - 1); 
-        trim(feedback);
-        printf("Feedback Entry:\nFrom: %s\nFeedback: %s\n-----------------------------\n", 
-               (id == 0) ? "Anonymous User" : (isPatientIdExists(id) ? "Patient ID" : "Patient ID (No longer in system)"), 
-               feedback); 
-        found = 1;
-    }
-    if (!found) printf("No feedback available.\n"); 
-    fclose(file); 
-    pauseProg();
-}
 
-void editDatabase()
+
+
+// ========================================
+// MEMBER 5: find doctor
+// ========================================
+void findDoctorPortal()
 {
     int choice;
     while (1) {
         clearScreen(); 
-        printf("==========\033[1;32m EDIT DATABASE \033[0m==========\n\n");
-        printf("1. View All Patients\n"); 
-        printf("2. Edit Patient Record\n"); 
-        printf("3. Delete Patient Record\n\n");
-        printf("4. View All Appointments\n"); 
-        printf("5. Edit Appointment\n"); 
-        printf("6. Delete Appointment\n\n");
-        printf("7. View All Lab Reports\n"); 
-        printf("8. Edit Lab Report\n"); 
-        printf("9. Delete Lab Report\n\n");
-        printf("10. View All Prescriptions\n"); 
-        printf("11. Edit Prescription\n"); 
-        printf("12. Delete Prescription\n\n");
-        printf("13. View All Staff\n"); 
-        printf("14. Edit Staff Record\n"); 
-        printf("15. Delete Staff Record\n\n");
-        printf("16. View All Doctors\n"); 
-        printf("17. Edit Doctor Record\n"); 
-        printf("18. Delete Doctor Record\n\n");
-        printf("19. Generate System Report\n\n"); 
-        printf("20. Back to Admin Portal\n");
+        printf("\n========== \033[1;32m FIND DOCTOR PORTAL \033[0m ==========\n\n");
+        printf("1. Search Doctor by Name\n"); 
+        printf("2. Search Doctor by Specialization\n"); 
+        printf("3. View All Doctors\n"); 
+        printf("4. Back to Main Menu\n");
         printf("\nEnter your choice: "); 
         if (scanf("%d", &choice) != 1) { 
             while (getchar() != '\n') {} 
             choice = 0; 
         } 
         while (getchar() != '\n') {}
-        switch (choice) {
+        switch (choice) { 
             case 1: 
-                showAllPatients(); 
+                searchDoctorByName(); 
                 break; 
             case 2: 
-                editPatientRecord(); 
+                searchDoctorBySpecialization(); 
                 break; 
             case 3: 
-                deletePatientRecord(); 
-                break;
-            case 4: 
-                viewAllAppointments(); 
-                break; 
-            case 5: 
-                editAppointment(); 
-                break; 
-            case 6: 
-                deleteAppointment(); 
-                break;
-            case 7: 
-                viewAllLabReports(); 
-                break; 
-            case 8: 
-                editLabReport(); 
-                break; 
-            case 9: 
-                deleteLabReport(); 
-                break;
-            case 10: 
-                viewAllPrescriptions(); 
-                break; 
-            case 11: 
-                editPrescription(); 
-                break; 
-            case 12: 
-                deletePrescription(); 
-                break;
-            case 13: 
-                viewAllStaff(); 
-                break; 
-            case 14: 
-                editStaffRecord(); 
-                break; 
-            case 15: 
-                deleteStaffRecord(); 
-                break;
-            case 16: 
                 viewAllDoctors(); 
                 break; 
-            case 17: 
-                editDoctorRecord(); 
-                break; 
-            case 18: 
-                deleteDoctorRecord(); 
-                break;
-            case 19: 
-                generateSystemReport(); 
-                break; 
-            case 20: 
-                return;
+            case 4: 
+                return; 
             default: 
                 printf("\nInvalid choice!\n"); 
-                pauseProg();
+                pauseProg(); 
         }
     }
 }
 
-void adminPortal()
-{
-    if (!authenticateAdmin()) { 
-        printf("\nAuthentication failed. Access denied.\n"); 
-        pauseProg(); 
-        return; 
-    }
-    int choice;
-    while (1) {
-        clearScreen(); 
-        printf("\n==========\033[1;32m ADMIN PORTAL \033[0m==========\n\n");
-        printf("1. Add Staff\n"); 
-        printf("2. Remove Staff\n\n"); 
-        printf("3. Add Doctor\n"); 
-        printf("4. Remove Doctor\n\n");
-        printf("5. Edit Database\n"); 
-        printf("6. View Feedbacks\n\n"); 
-        printf("7. Back to Main Menu\n");
-        printf("\nEnter your choice: "); 
-        if (scanf("%d", &choice) != 1) { 
-            while (getchar() != '\n') {} 
-            choice = 0; 
-        } 
-        while (getchar() != '\n') {}
-        switch (choice) {
-            case 1: 
-                addStaff(); 
-                break; 
-            case 2: 
-                removeStaff(); 
-                break; 
-            case 3: 
-                addDoctor(); 
-                break; 
-            case 4: 
-                removeDoctor(); 
-                break;
-            case 5: 
-                editDatabase(); 
-                break; 
-            case 6: 
-                viewFeedback(); 
-                break; 
-            case 7: 
-                return;
-            default: 
-                printf("\nInvalid choice!\n"); 
-                pauseProg();
-        }
-    }
-}
+//------funtions--------
 
 void searchDoctorByName()
 {
@@ -1991,40 +1540,9 @@ void searchDoctorBySpecialization()
     pauseProg();
 }
 
-void findDoctorPortal()
-{
-    int choice;
-    while (1) {
-        clearScreen(); 
-        printf("\n========== \033[1;32m FIND DOCTOR PORTAL \033[0m ==========\n\n");
-        printf("1. Search Doctor by Name\n"); 
-        printf("2. Search Doctor by Specialization\n"); 
-        printf("3. View All Doctors\n"); 
-        printf("4. Back to Main Menu\n");
-        printf("\nEnter your choice: "); 
-        if (scanf("%d", &choice) != 1) { 
-            while (getchar() != '\n') {} 
-            choice = 0; 
-        } 
-        while (getchar() != '\n') {}
-        switch (choice) { 
-            case 1: 
-                searchDoctorByName(); 
-                break; 
-            case 2: 
-                searchDoctorBySpecialization(); 
-                break; 
-            case 3: 
-                viewAllDoctors(); 
-                break; 
-            case 4: 
-                return; 
-            default: 
-                printf("\nInvalid choice!\n"); 
-                pauseProg(); 
-        }
-    }
-}
+// ========================================
+//      CONCLUSION(devloper)
+// ========================================
 
 void contributionPortal()
 {
@@ -2067,36 +1585,10 @@ printf("\n____________________________Thank You ! ____________________________\n
     }
 }
 
-void feedback()
-{
-    clearScreen(); 
-    int id; 
-    char fb[1000];
-    printf("Enter your Patient ID (or 0 to remain anonymous): "); 
-    if (scanf("%d", &id) != 1) { 
-        while (getchar() != '\n') {} 
-        id = 0; 
-    } 
-    while (getchar() != '\n') {}
-    if (id != 0 && !isPatientIdExists(id)) { 
-        printf("\n\033[1;31mError: Patient ID %d does not exist!\033[0m\n", id); 
-        pauseProg(); 
-        return; 
-    }
-    printf("Enter your feedback (single line):\n"); 
-    read_line(fb, sizeof(fb)); 
-    trim(fb);
-    FILE *f = fopen("feedback.txt", "a"); 
-    if (!f) { 
-        perror("Unable to open feedback.txt"); 
-        pauseProg(); 
-        return; 
-    }
-    fprintf(f, "%d|%s\n", id, fb); 
-    fclose(f);
-    printf("\nThank you for your feedback!\n"); 
-    pauseProg();
-}
+//------functions finish----------//
+
+
+// main  //
 
 int main()
 {
@@ -2123,10 +1615,9 @@ int main()
     printf("| 5. Admin Portal                                            |\n");
     printf("|                                                            |\n");
     printf("| 6. Find Doctor                                             |\n");
-    printf("| 7. Feedback                                                |\n");
     printf("|                                                            |\n");
-    printf("| 8. Team Details                                            |\n");
-    printf("| 9. Exit System                                             |\n");
+    printf("| 7. Team Details                                            |\n");
+    printf("| 8. Exit System                                             |\n");
     printf("|                                                            |\n");
     printf("+------------------------------------------------------------+\n\n");
     
@@ -2156,12 +1647,9 @@ int main()
                 findDoctorPortal(); 
                 break; 
             case 7: 
-                feedback(); 
-                break; 
-            case 8: 
                 contributionPortal(); 
                 break;
-            case 9: 
+            case 8: 
                 printf("\nThank you for using the system!\n"); 
                 exit(0);
             default: 
